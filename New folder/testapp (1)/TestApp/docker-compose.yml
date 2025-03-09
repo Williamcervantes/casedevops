@@ -4,5 +4,10 @@ services:
     build: .
     ports:
       - "8000:8000"
+    environment:
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_DEFAULT_REGION=sa-east-1
     volumes:
+      - ~/.aws:/root/.aws:ro
       - .:/app
