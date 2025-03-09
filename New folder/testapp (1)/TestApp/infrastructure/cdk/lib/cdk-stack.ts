@@ -22,15 +22,30 @@ export class CdkStack extends cdk.Stack {
     const cluster = new ecs.Cluster(this, 'TestAppCluster', { vpc });
 
     // Create an ECR Repository for the Docker image
-    const repository = new ecr.Repository(this, 'TestAppRepository');
+    const repository = ecr.Repository.fromRepositoryName(this, 'TestAppRepository', 'cdk-hnb659fds-container-assets-863518431049-sa-east-1');
 
-    // Define an IAM Role for ECS Tasks
+    // Create an IAM Role for ECS Task Execution (ensures ECS can pull from ECR and use CloudWatch)
+    const executionRole = new iam.Role(this, 'EcsExecutionRole', {
+      assumedBy: new iam.ServicePrincipal('ecs-tasks.amazonaws.com'),
+      managedPolicies: [
+        iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonEC2ContainerRegistryReadOnly"),
+        iam.ManagedPolicy.fromAwsManagedPolicyName("service-role/AmazonECSTaskExecutionRolePolicy"),
+      ],
+    });
+
+    // Create an IAM Role for ECS Tasks (Application-specific permissions)
     const taskRole = new iam.Role(this, 'TestAppTaskRole', {
       assumedBy: new iam.ServicePrincipal('ecs-tasks.amazonaws.com'),
       managedPolicies: [
         iam.ManagedPolicy.fromAwsManagedPolicyName('service-role/AmazonECSTaskExecutionRolePolicy'),
       ],
     });
+
+    taskRole.addToPolicy(new iam.PolicyStatement({
+      effect: iam.Effect.ALLOW,
+      actions: ['secretsmanager:GetSecretValue'],
+      resources: [`arn:aws:secretsmanager:sa-east-1:${this.account}:secret:TestAppSecrets*`],
+    }));
 
     // Retrieve secrets from AWS Secrets Manager
     const secret = secretsmanager.Secret.fromSecretNameV2(this, 'TestAppSecret', 'TestAppSecrets');
@@ -39,15 +54,24 @@ export class CdkStack extends cdk.Stack {
     const taskDefinition = new ecs.FargateTaskDefinition(this, 'TestAppTask', {
       memoryLimitMiB: 1024,
       cpu: 512,
-      taskRole: taskRole,
+      taskRole: taskRole,  // ✅ Attach the updated Task Role
+    });
+
+    // Create a CloudWatch Log Group
+    const logGroup = new logs.LogGroup(this, 'TestAppLogGroup', {
+      logGroupName: '/aws/ecs/TestAppLogs',
+      removalPolicy: cdk.RemovalPolicy.DESTROY, // Delete logs when stack is destroyed
     });
 
     // Add a Container to ECS Task
     const container = taskDefinition.addContainer('TestAppContainer', {
-      image: ecs.ContainerImage.fromEcrRepository(repository, 'latest'),
-      logging: ecs.LogDrivers.awsLogs({ streamPrefix: 'TestApp' }),
+      image: ecs.ContainerImage.fromEcrRepository(repository, 'latest'), // ✅ Ensure "latest" exists in ECR
+      logging: ecs.LogDrivers.awsLogs({
+        streamPrefix: 'TestApp',
+        logGroup: logGroup,
+      }),
       environment: {
-        DJANGO_SETTINGS_MODULE: 'testapp.settings.production',
+        DJANGO_SETTINGS_MODULE: 'testapp.settings',
       },
       secrets: {
         DJANGO_SECRET_KEY: ecs.Secret.fromSecretsManager(secret, 'DJANGO_SECRET_KEY'),
@@ -56,6 +80,7 @@ export class CdkStack extends cdk.Stack {
       },
     });
 
+    // Map container port
     container.addPortMappings({
       containerPort: 8000,
     });
