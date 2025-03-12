@@ -97,9 +97,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Check if AWS Deployment Should Be Skipped
+        run: |
+          if [[ "${{ secrets.SKIP_AWS_DEPLOY }}" == "true" ]]; then
+            echo "Skipping AWS Deployment (Test Mode Enabled)"
+            exit 0
+          fi
+
+      - name: Set Environment Variables
+        run: echo "DJANGO_DEBUG=${{ secrets.DJANGO_DEBUG || 'false' }}" >> $GITHUB_ENV
+
       - name: Update ECS Service with new image
         run: |
           aws ecs update-service --cluster testapp-cluster --service testapp-service --force-new-deployment
-      - name: Set Environment Variables
-        run: echo "DJANGO_DEBUG=${{ secrets.DJANGO_DEBUG }}" >> $GITHUB_ENV
-        
+
