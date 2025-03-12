@@ -28,6 +28,7 @@ jobs:
         run: |
           echo "GITHUB_ACTIONS=true" >> $GITHUB_ENV
           echo "DJANGO_SECRET_KEY=mock-secret-key" >> $GITHUB_ENV
+          echo "DJANGO_DEBUG=False" >> $GITHUB_ENV
 
       - name: Run Django tests
         run: |

@@ -20,7 +20,17 @@ from botocore.exceptions import NoCredentialsError, PartialCredentialsError, Cli
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 def get_secret():
-    """Fetches secrets from AWS Secrets Manager."""
+    """Fetches secrets from AWS Secrets Manager or uses mock values in CI/CD."""
+    
+    # ✅ If running inside GitHub Actions, return mock secrets
+    if os.getenv("GITHUB_ACTIONS") == "true":
+        print("Running in GitHub Actions: Using mock secrets.")
+        return {
+            "DJANGO_SECRET_KEY": "mock-secret-key",
+            "DJANGO_DEBUG": "False"
+        }
+
+    # ✅ Otherwise, try fetching from AWS Secrets Manager
     secret_name = "TestAppSecrets"
     region_name = "sa-east-1"
 
@@ -31,24 +41,27 @@ def get_secret():
         get_secret_value_response = client.get_secret_value(SecretId=secret_name)
         secret = get_secret_value_response['SecretString']
         return json.loads(secret)
+    
     except (NoCredentialsError, PartialCredentialsError):
-        print("⚠️ WARNING: AWS credentials not found. Using default environment values.")
+        print("⚠️ WARNING: AWS credentials not found. Using environment values.")
         return {}
+
     except ClientError as e:
         print(f"⚠️ WARNING: Unable to retrieve secret `{secret_name}`. Error: {str(e)}")
         return {}
 
-# Fetch secrets from AWS Secrets Manager
+# ✅ Load secrets
 secrets = get_secret()
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
+# ✅ Ensure SECRET_KEY is never empty
+SECRET_KEY = secrets.get("DJANGO_SECRET_KEY", os.getenv("DJANGO_SECRET_KEY", "fallback-secret-key"))
 
-# SECURITY WARNING: Keep the secret key used in production secret!
-SECRET_KEY = secrets.get('DJANGO_SECRET_KEY')
+if not SECRET_KEY:
+    raise ValueError("❌ ERROR: SECRET_KEY is missing! Ensure it is set in Secrets Manager or environment variables.")
 
-# SECURITY WARNING: Don't run with debug turned on in production!
+# ✅ Set DEBUG with proper fallback
 DEBUG = secrets.get('DJANGO_DEBUG', os.getenv('DJANGO_DEBUG', 'False')).lower() == 'true'
+
 
 # Handling ALLOWED_HOSTS dynamically
 ALLOWED_HOSTS = ["*"]
