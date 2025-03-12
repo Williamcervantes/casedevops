@@ -1,0 +1,111 @@
+name: Deploy Django App to AWS ECS
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: |
+          pip install -r testapp/requirements.txt
+
+      - name: Set environment variables for Mock Secrets
+        run: |
+          echo "GITHUB_ACTIONS=true" >> $GITHUB_ENV
+          echo "DJANGO_SECRET_KEY=mock-secret-key" >> $GITHUB_ENV
+          echo "DJANGO_DEBUG=False" >> $GITHUB_ENV
+
+      - name: Run Django tests
+        run: |
+          python testapp/manage.py test
+
+  build:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Set up AWS CLI
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Install AWS CDK
+        run: npm install -g aws-cdk
+
+      - name: Install dependencies
+        run: npm install
+        working-directory: infra  # Adjust to your CDK directory
+
+      - name: Synthesize CloudFormation templates
+        run: cdk synth
+        working-directory: infra
+
+      - name: Deploy AWS CDK Stack
+        run: cdk deploy --require-approval never
+        working-directory: infra
+
+  push-image:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build and tag Docker image
+        run: |
+          docker build -t ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/testapp:latest .
+          docker tag ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/testapp:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/testapp:$(git rev-parse --short HEAD)
+
+      - name: Push Docker image to Amazon ECR
+        run: |
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/testapp:latest
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/testapp:$(git rev-parse --short HEAD)
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: push-image
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Check if AWS Deployment Should Be Skipped
+        run: |
+          if [[ "${{ secrets.SKIP_AWS_DEPLOY }}" == "true" ]]; then
+            echo "Skipping AWS Deployment (Test Mode Enabled)"
+            exit 0
+          fi
+
+      - name: Set Environment Variables
+        run: echo "DJANGO_DEBUG=${{ secrets.DJANGO_DEBUG || 'false' }}" >> $GITHUB_ENV
+
+      - name: Update ECS Service with new image
+        run: |
+          aws ecs update-service --cluster testapp-cluster --service testapp-service --force-new-deployment

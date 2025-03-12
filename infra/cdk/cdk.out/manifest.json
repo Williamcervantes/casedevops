@@ -1,0 +1,896 @@
+{
+  "version": "39.0.0",
+  "artifacts": {
+    "CdkStack.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "CdkStack.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "CdkStack": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://unknown-account/unknown-region",
+      "properties": {
+        "templateFile": "CdkStack.template.json",
+        "terminationProtection": false,
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/b04a4f7c0260081ea459c73e00c74e92addd5c956f4534e89e9a4aef6e29d367.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "CdkStack.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-lookup-role-${AWS::AccountId}-${AWS::Region}",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "CdkStack.assets"
+      ],
+      "metadata": {
+        "/CdkStack/TestAppVPC": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": {
+              "maxAzs": "*",
+              "natGateways": "*"
+            }
+          }
+        ],
+        "/CdkStack/TestAppVPC/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TestAppVPCDECA2088"
+          }
+        ],
+        "/CdkStack/TestAppVPC/PublicSubnet1": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": {
+              "availabilityZone": "*",
+              "vpcId": "*",
+              "cidrBlock": "*",
+              "mapPublicIpOnLaunch": true,
+              "ipv6CidrBlock": "*",
+              "assignIpv6AddressOnCreation": "*"
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": {
+              "availabilityZone": "*",
+              "vpcId": "*",
+              "cidrBlock": "*",
+              "mapPublicIpOnLaunch": true,
+              "ipv6CidrBlock": "*",
+              "assignIpv6AddressOnCreation": "*"
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {}
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addNatGateway": [
+                "*"
+              ]
+            }
+          }
+        ],
+        "/CdkStack/TestAppVPC/PublicSubnet1/Subnet": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TestAppVPCPublicSubnet1Subnet5FBABE03"
+          }
+        ],
+        "/CdkStack/TestAppVPC/PublicSubnet1/RouteTable": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TestAppVPCPublicSubnet1RouteTable657E7D08"
+          }
+        ],
+        "/CdkStack/TestAppVPC/PublicSubnet1/RouteTableAssociation": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TestAppVPCPublicSubnet1RouteTableAssociationA6CAFB7F"
+          }
+        ],
+        "/CdkStack/TestAppVPC/PublicSubnet1/DefaultRoute": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TestAppVPCPublicSubnet1DefaultRouteD3B66032"
+          }
+        ],
+        "/CdkStack/TestAppVPC/PublicSubnet1/EIP": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TestAppVPCPublicSubnet1EIP1AAD2E61"
+          }
+        ],
+        "/CdkStack/TestAppVPC/PublicSubnet1/NATGateway": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TestAppVPCPublicSubnet1NATGateway409CABE0"
+          }
+        ],
+        "/CdkStack/TestAppVPC/PublicSubnet2": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": {
+              "availabilityZone": "*",
+              "vpcId": "*",
+              "cidrBlock": "*",
+              "mapPublicIpOnLaunch": true,
+              "ipv6CidrBlock": "*",
+              "assignIpv6AddressOnCreation": "*"
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": {
+              "availabilityZone": "*",
+              "vpcId": "*",
+              "cidrBlock": "*",
+              "mapPublicIpOnLaunch": true,
+              "ipv6CidrBlock": "*",
+              "assignIpv6AddressOnCreation": "*"
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {}
+          }
+        ],
+        "/CdkStack/TestAppVPC/PublicSubnet2/Subnet": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TestAppVPCPublicSubnet2Subnet1666907F"
+          }
+        ],
+        "/CdkStack/TestAppVPC/PublicSubnet2/RouteTable": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TestAppVPCPublicSubnet2RouteTableF0CD627B"
+          }
+        ],
+        "/CdkStack/TestAppVPC/PublicSubnet2/RouteTableAssociation": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TestAppVPCPublicSubnet2RouteTableAssociationAF0AEACF"
+          }
+        ],
+        "/CdkStack/TestAppVPC/PublicSubnet2/DefaultRoute": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TestAppVPCPublicSubnet2DefaultRoute3D8D1384"
+          }
+        ],
+        "/CdkStack/TestAppVPC/PrivateSubnet1": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": {
+              "availabilityZone": "*",
+              "vpcId": "*",
+              "cidrBlock": "*",
+              "mapPublicIpOnLaunch": false,
+              "ipv6CidrBlock": "*",
+              "assignIpv6AddressOnCreation": "*"
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": {
+              "availabilityZone": "*",
+              "vpcId": "*",
+              "cidrBlock": "*",
+              "mapPublicIpOnLaunch": false,
+              "ipv6CidrBlock": "*",
+              "assignIpv6AddressOnCreation": "*"
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {}
+          }
+        ],
+        "/CdkStack/TestAppVPC/PrivateSubnet1/Subnet": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TestAppVPCPrivateSubnet1Subnet6E126316"
+          }
+        ],
+        "/CdkStack/TestAppVPC/PrivateSubnet1/RouteTable": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TestAppVPCPrivateSubnet1RouteTable7065FE3E"
+          }
+        ],
+        "/CdkStack/TestAppVPC/PrivateSubnet1/RouteTableAssociation": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TestAppVPCPrivateSubnet1RouteTableAssociation06E64591"
+          }
+        ],
+        "/CdkStack/TestAppVPC/PrivateSubnet1/DefaultRoute": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TestAppVPCPrivateSubnet1DefaultRouteA080E88E"
+          }
+        ],
+        "/CdkStack/TestAppVPC/PrivateSubnet2": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": {
+              "availabilityZone": "*",
+              "vpcId": "*",
+              "cidrBlock": "*",
+              "mapPublicIpOnLaunch": false,
+              "ipv6CidrBlock": "*",
+              "assignIpv6AddressOnCreation": "*"
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": {
+              "availabilityZone": "*",
+              "vpcId": "*",
+              "cidrBlock": "*",
+              "mapPublicIpOnLaunch": false,
+              "ipv6CidrBlock": "*",
+              "assignIpv6AddressOnCreation": "*"
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {}
+          }
+        ],
+        "/CdkStack/TestAppVPC/PrivateSubnet2/Subnet": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TestAppVPCPrivateSubnet2SubnetE5812EEA"
+          }
+        ],
+        "/CdkStack/TestAppVPC/PrivateSubnet2/RouteTable": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TestAppVPCPrivateSubnet2RouteTableF041613F"
+          }
+        ],
+        "/CdkStack/TestAppVPC/PrivateSubnet2/RouteTableAssociation": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TestAppVPCPrivateSubnet2RouteTableAssociation5BDBB185"
+          }
+        ],
+        "/CdkStack/TestAppVPC/PrivateSubnet2/DefaultRoute": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TestAppVPCPrivateSubnet2DefaultRoute2D3DB2B1"
+          }
+        ],
+        "/CdkStack/TestAppVPC/IGW": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TestAppVPCIGW6CE8D7D7"
+          }
+        ],
+        "/CdkStack/TestAppVPC/VPCGW": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TestAppVPCVPCGW344A8B3A"
+          }
+        ],
+        "/CdkStack/TestAppVPC/RestrictDefaultSecurityGroupCustomResource": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": "*"
+          }
+        ],
+        "/CdkStack/TestAppVPC/RestrictDefaultSecurityGroupCustomResource/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TestAppVPCRestrictDefaultSecurityGroupCustomResource2273AB1A"
+          }
+        ],
+        "/CdkStack/Custom::VpcRestrictDefaultSGCustomResourceProvider": [
+          {
+            "type": "aws:cdk:is-custom-resource-handler-customResourceProvider",
+            "data": true
+          }
+        ],
+        "/CdkStack/Custom::VpcRestrictDefaultSGCustomResourceProvider/Role": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CustomVpcRestrictDefaultSGCustomResourceProviderRole26592FE0"
+          }
+        ],
+        "/CdkStack/Custom::VpcRestrictDefaultSGCustomResourceProvider/Handler": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CustomVpcRestrictDefaultSGCustomResourceProviderHandlerDC833E5E"
+          }
+        ],
+        "/CdkStack/TestAppCluster": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": {
+              "vpc": "*"
+            }
+          }
+        ],
+        "/CdkStack/TestAppCluster/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TestAppCluster8D54A1F5"
+          }
+        ],
+        "/CdkStack/EcsExecutionRole": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": {
+              "assumedBy": {
+                "principalAccount": "*",
+                "assumeRoleAction": "*"
+              },
+              "managedPolicies": [
+                {
+                  "managedPolicyArn": "*"
+                },
+                {
+                  "managedPolicyArn": "*"
+                }
+              ]
+            }
+          }
+        ],
+        "/CdkStack/EcsExecutionRole/ImportEcsExecutionRole": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": "*"
+          }
+        ],
+        "/CdkStack/EcsExecutionRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "EcsExecutionRoleFD93B7A2"
+          }
+        ],
+        "/CdkStack/TestAppTaskRole": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": {
+              "assumedBy": {
+                "principalAccount": "*",
+                "assumeRoleAction": "*"
+              },
+              "managedPolicies": [
+                {
+                  "managedPolicyArn": "*"
+                }
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addToPolicy": [
+                {}
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addToPrincipalPolicy": [
+                {}
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "attachInlinePolicy": [
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "attachInlinePolicy": [
+                "*"
+              ]
+            }
+          }
+        ],
+        "/CdkStack/TestAppTaskRole/ImportTestAppTaskRole": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": "*"
+          }
+        ],
+        "/CdkStack/TestAppTaskRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TestAppTaskRole7F41EE3A"
+          }
+        ],
+        "/CdkStack/TestAppTaskRole/DefaultPolicy": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": "*"
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "attachToRole": [
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "attachToRole": [
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addStatements": [
+                {}
+              ]
+            }
+          }
+        ],
+        "/CdkStack/TestAppTaskRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TestAppTaskRoleDefaultPolicyF0F91719"
+          }
+        ],
+        "/CdkStack/TestAppTask": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": "*"
+          },
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": "*"
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": "*"
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": "*"
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": "*"
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": "*"
+          }
+        ],
+        "/CdkStack/TestAppTask/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TestAppTaskE01CB289"
+          }
+        ],
+        "/CdkStack/TestAppTask/ExecutionRole": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": {
+              "assumedBy": {
+                "principalAccount": "*",
+                "assumeRoleAction": "*"
+              },
+              "roleName": "*"
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addToPrincipalPolicy": [
+                {}
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "attachInlinePolicy": [
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "attachInlinePolicy": [
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addToPrincipalPolicy": [
+                {}
+              ]
+            }
+          }
+        ],
+        "/CdkStack/TestAppTask/ExecutionRole/ImportExecutionRole": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": "*"
+          }
+        ],
+        "/CdkStack/TestAppTask/ExecutionRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TestAppTaskExecutionRole7E021936"
+          }
+        ],
+        "/CdkStack/TestAppTask/ExecutionRole/DefaultPolicy": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": "*"
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "attachToRole": [
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "attachToRole": [
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addStatements": [
+                {}
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addStatements": [
+                {}
+              ]
+            }
+          }
+        ],
+        "/CdkStack/TestAppTask/ExecutionRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TestAppTaskExecutionRoleDefaultPolicy46D62323"
+          }
+        ],
+        "/CdkStack/TestAppLogGroup": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": {
+              "logGroupName": "*",
+              "removalPolicy": "destroy"
+            }
+          }
+        ],
+        "/CdkStack/TestAppLogGroup/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TestAppLogGroup945C01C5"
+          }
+        ],
+        "/CdkStack/DjangoService/LB": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": "*"
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": "*"
+          }
+        ],
+        "/CdkStack/DjangoService/LB/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DjangoServiceLBDB67D563"
+          }
+        ],
+        "/CdkStack/DjangoService/LB/SecurityGroup": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": {
+              "vpc": "*",
+              "description": "*",
+              "allowAllOutbound": false
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addIngressRule": [
+                {
+                  "canInlineRule": true,
+                  "connections": "*",
+                  "uniqueId": "*"
+                },
+                {},
+                "*",
+                false
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addEgressRule": [
+                "*",
+                {},
+                "*",
+                true
+              ]
+            }
+          }
+        ],
+        "/CdkStack/DjangoService/LB/SecurityGroup/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DjangoServiceLBSecurityGroup04BD3C38"
+          }
+        ],
+        "/CdkStack/DjangoService/LB/SecurityGroup/to CdkStackDjangoServiceSecurityGroup0E041AB2:8000": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DjangoServiceLBSecurityGrouptoCdkStackDjangoServiceSecurityGroup0E041AB2800031AA9115"
+          }
+        ],
+        "/CdkStack/DjangoService/LB/PublicListener": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": "*"
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": "*"
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": "*"
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": "*"
+          }
+        ],
+        "/CdkStack/DjangoService/LB/PublicListener/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DjangoServiceLBPublicListener212DDF4C"
+          }
+        ],
+        "/CdkStack/DjangoService/LB/PublicListener/ECSGroup/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DjangoServiceLBPublicListenerECSGroup44A6047F"
+          }
+        ],
+        "/CdkStack/DjangoService/LoadBalancerDNS": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DjangoServiceLoadBalancerDNSDE4DECD1"
+          }
+        ],
+        "/CdkStack/DjangoService/ServiceURL": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DjangoServiceServiceURL9BB7BF44"
+          }
+        ],
+        "/CdkStack/DjangoService/Service": [
+          {
+            "type": "aws:cdk:warning",
+            "data": "minHealthyPercent has not been configured so the default value of 50% is used. The number of running tasks will decrease below the desired count during deployments etc. See https://github.com/aws/aws-cdk/issues/31705 [ack: @aws-cdk/aws-ecs:minHealthyPercent]",
+            "trace": [
+              "Annotations.addMessage (/home/pedro/Desktop/case/casedevops/infra/cdk/node_modules/aws-cdk-lib/core/lib/annotations.js:1:1608)",
+              "Annotations.addWarningV2 (/home/pedro/Desktop/case/casedevops/infra/cdk/node_modules/aws-cdk-lib/core/lib/annotations.js:1:825)",
+              "new BaseService (/home/pedro/Desktop/case/casedevops/infra/cdk/node_modules/aws-cdk-lib/aws-ecs/lib/base/base-service.js:1:8100)",
+              "new FargateService (/home/pedro/Desktop/case/casedevops/infra/cdk/node_modules/aws-cdk-lib/aws-ecs/lib/fargate/fargate-service.js:1:3551)",
+              "new ApplicationLoadBalancedFargateService (/home/pedro/Desktop/case/casedevops/infra/cdk/node_modules/aws-cdk-lib/aws-ecs-patterns/lib/fargate/application-load-balanced-fargate-service.js:1:3340)",
+              "new CdkStack (/home/pedro/Desktop/case/casedevops/infra/cdk/lib/cdk-stack.ts:97:28)",
+              "Object.<anonymous> (/home/pedro/Desktop/case/casedevops/infra/cdk/bin/cdk.ts:6:1)",
+              "Module._compile (node:internal/modules/cjs/loader:1356:14)",
+              "Module.m._compile (/home/pedro/Desktop/case/casedevops/infra/cdk/node_modules/ts-node/src/index.ts:1618:23)",
+              "Module._extensions..js (node:internal/modules/cjs/loader:1414:10)",
+              "Object.require.extensions.<computed> [as .ts] (/home/pedro/Desktop/case/casedevops/infra/cdk/node_modules/ts-node/src/index.ts:1621:12)",
+              "Module.load (node:internal/modules/cjs/loader:1197:32)",
+              "Function.Module._load (node:internal/modules/cjs/loader:1013:12)",
+              "Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:128:12)",
+              "phase4 (/home/pedro/Desktop/case/casedevops/infra/cdk/node_modules/ts-node/src/bin.ts:649:14)",
+              "bootstrap (/home/pedro/Desktop/case/casedevops/infra/cdk/node_modules/ts-node/src/bin.ts:95:10)",
+              "main (/home/pedro/Desktop/case/casedevops/infra/cdk/node_modules/ts-node/src/bin.ts:55:10)",
+              "Object.<anonymous> (/home/pedro/Desktop/case/casedevops/infra/cdk/node_modules/ts-node/src/bin.ts:800:3)",
+              "Module._compile (node:internal/modules/cjs/loader:1356:14)",
+              "Object.Module._extensions..js (node:internal/modules/cjs/loader:1414:10)",
+              "Module.load (node:internal/modules/cjs/loader:1197:32)",
+              "Function.Module._load (node:internal/modules/cjs/loader:1013:12)",
+              "Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:128:12)",
+              "node:internal/main/run_main_module:28:49"
+            ]
+          },
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": "*"
+          }
+        ],
+        "/CdkStack/DjangoService/Service/Service": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DjangoServiceDD9C71D7"
+          }
+        ],
+        "/CdkStack/DjangoService/Service/SecurityGroup": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": {
+              "vpc": "*"
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addIngressRule": [
+                "*",
+                {},
+                "*",
+                false
+              ]
+            }
+          }
+        ],
+        "/CdkStack/DjangoService/Service/SecurityGroup/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DjangoServiceSecurityGroupB785C401"
+          }
+        ],
+        "/CdkStack/DjangoService/Service/SecurityGroup/from CdkStackDjangoServiceLBSecurityGroup286B3AC6:8000": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DjangoServiceSecurityGroupfromCdkStackDjangoServiceLBSecurityGroup286B3AC68000C3698E4B"
+          }
+        ],
+        "/CdkStack/DjangoService/Service/ScalingRole": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": "*"
+          }
+        ],
+        "/CdkStack/DjangoService/Service/TaskCount/Target": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": {
+              "serviceNamespace": "ecs",
+              "scalableDimension": "*",
+              "resourceId": "*",
+              "role": "*",
+              "minCapacity": "*",
+              "maxCapacity": "*"
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "scaleToTrackMetric": [
+                "*",
+                {
+                  "predefinedMetric": "*",
+                  "policyName": "*",
+                  "disableScaleIn": "*",
+                  "targetValue": "*",
+                  "scaleInCooldown": "*"
+                }
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "scaleToTrackMetric": [
+                "*",
+                {
+                  "predefinedMetric": "*",
+                  "targetValue": "*",
+                  "policyName": "*",
+                  "disableScaleIn": "*",
+                  "scaleInCooldown": "*"
+                }
+              ]
+            }
+          }
+        ],
+        "/CdkStack/DjangoService/Service/TaskCount/Target/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DjangoServiceTaskCountTarget492FA416"
+          }
+        ],
+        "/CdkStack/DjangoService/Service/TaskCount/Target/CpuScaling/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DjangoServiceTaskCountTargetCpuScaling18F723E6"
+          }
+        ],
+        "/CdkStack/DjangoService/Service/TaskCount/Target/MemoryScaling/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DjangoServiceTaskCountTargetMemoryScaling5EB3ADD5"
+          }
+        ],
+        "/CdkStack/LoadBalancerDNS": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "LoadBalancerDNS"
+          }
+        ],
+        "/CdkStack/CDKMetadata/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadata"
+          }
+        ],
+        "/CdkStack/CDKMetadata/Condition": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadataAvailable"
+          }
+        ],
+        "/CdkStack/BootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BootstrapVersion"
+          }
+        ],
+        "/CdkStack/CheckBootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CheckBootstrapVersion"
+          }
+        ]
+      },
+      "displayName": "CdkStack"
+    },
+    "Tree": {
+      "type": "cdk:tree",
+      "properties": {
+        "file": "tree.json"
+      }
+    }
+  }
+}
