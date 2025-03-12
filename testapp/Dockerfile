@@ -16,20 +16,14 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the entire application
 COPY . /app
 
-# Change the working directory to inside 'testapp'
-WORKDIR /app/testapp
-
 # Verify that manage.py exists
-RUN ls -l /app/testapp
+RUN ls -l /app
 
-# install gunicorn
+# Install gunicorn
 RUN pip install gunicorn
-
-# Collect static files (if applicable)
-RUN python manage.py collectstatic --noinput || echo "Skipping collectstatic"
 
 # Expose the port Django runs on
 EXPOSE 8000
 
-# Run migrations and start the application
-CMD ["sh", "-c", "python manage.py migrate && gunicorn testapp.wsgi:application --bind 0.0.0.0:8000"]
+# Entry point script to handle migrations and start the server
+ENTRYPOINT ["sh", "/app/start.sh"]

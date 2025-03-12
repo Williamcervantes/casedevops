@@ -4,9 +4,9 @@ import * as ecs from 'aws-cdk-lib/aws-ecs';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as ecr from 'aws-cdk-lib/aws-ecr';
 import * as iam from 'aws-cdk-lib/aws-iam';
-import * as elbv2 from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import * as secretsmanager from 'aws-cdk-lib/aws-secretsmanager';
 import * as logs from 'aws-cdk-lib/aws-logs';
+import * as ecsPatterns from 'aws-cdk-lib/aws-ecs-patterns';
 
 export class CdkStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -21,10 +21,14 @@ export class CdkStack extends cdk.Stack {
     // Create an ECS Cluster
     const cluster = new ecs.Cluster(this, 'TestAppCluster', { vpc });
 
-    // Create an ECR Repository for the Docker image
-    const repository = ecr.Repository.fromRepositoryName(this, 'TestAppRepository', 'cdk-hnb659fds-container-assets-863518431049-sa-east-1');
+    // Define ECR Repository Name
+    const repoName = 'cdk-hnb659fds-container-assets-863518431049-sa-east-1';
+    const repository = ecr.Repository.fromRepositoryName(this, 'TestAppRepository', repoName);
 
-    // Create an IAM Role for ECS Task Execution (ensures ECS can pull from ECR and use CloudWatch)
+    // Get the latest image tag from environment variable
+    const latestImageTag = process.env.ECR_LATEST_TAG || 'latest';
+
+    // Create an IAM Role for ECS Task Execution
     const executionRole = new iam.Role(this, 'EcsExecutionRole', {
       assumedBy: new iam.ServicePrincipal('ecs-tasks.amazonaws.com'),
       managedPolicies: [
@@ -33,7 +37,7 @@ export class CdkStack extends cdk.Stack {
       ],
     });
 
-    // Create an IAM Role for ECS Tasks (Application-specific permissions)
+    // Create an IAM Role for ECS Tasks
     const taskRole = new iam.Role(this, 'TestAppTaskRole', {
       assumedBy: new iam.ServicePrincipal('ecs-tasks.amazonaws.com'),
       managedPolicies: [
@@ -41,42 +45,46 @@ export class CdkStack extends cdk.Stack {
       ],
     });
 
+    // Attach Secrets Manager Permissions to ECS Task Role
     taskRole.addToPolicy(new iam.PolicyStatement({
       effect: iam.Effect.ALLOW,
       actions: ['secretsmanager:GetSecretValue'],
       resources: [`arn:aws:secretsmanager:sa-east-1:${this.account}:secret:TestAppSecrets*`],
     }));
 
-    // Retrieve secrets from AWS Secrets Manager
-    const secret = secretsmanager.Secret.fromSecretNameV2(this, 'TestAppSecret', 'TestAppSecrets');
+    // Retrieve secrets from AWS Secrets Manager correctly
+    const secret = secretsmanager.Secret.fromSecretAttributes(this, 'TestAppSecret', {
+      secretCompleteArn: `arn:aws:secretsmanager:sa-east-1:${this.account}:secret:TestAppSecrets`,
+    });
 
     // Define the ECS Task Definition
     const taskDefinition = new ecs.FargateTaskDefinition(this, 'TestAppTask', {
       memoryLimitMiB: 1024,
       cpu: 512,
-      taskRole: taskRole,  // ✅ Attach the updated Task Role
+      taskRole: taskRole,
     });
 
     // Create a CloudWatch Log Group
     const logGroup = new logs.LogGroup(this, 'TestAppLogGroup', {
       logGroupName: '/aws/ecs/TestAppLogs',
-      removalPolicy: cdk.RemovalPolicy.DESTROY, // Delete logs when stack is destroyed
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
 
     // Add a Container to ECS Task
     const container = taskDefinition.addContainer('TestAppContainer', {
-      image: ecs.ContainerImage.fromEcrRepository(repository, 'latest'), // ✅ Ensure "latest" exists in ECR
+      image: ecs.ContainerImage.fromRegistry(
+        `public.ecr.aws/${this.account}.dkr.ecr.sa-east-1.amazonaws.com/${repoName}:${latestImageTag}`
+      ),
       logging: ecs.LogDrivers.awsLogs({
         streamPrefix: 'TestApp',
         logGroup: logGroup,
       }),
       environment: {
         DJANGO_SETTINGS_MODULE: 'testapp.settings',
+        DJANGO_DEBUG: process.env.DJANGO_DEBUG || 'False',
       },
       secrets: {
         DJANGO_SECRET_KEY: ecs.Secret.fromSecretsManager(secret, 'DJANGO_SECRET_KEY'),
-        DJANGO_DEBUG: ecs.Secret.fromSecretsManager(secret, 'DJANGO_DEBUG'),
-        DJANGO_ALLOWED_HOSTS: ecs.Secret.fromSecretsManager(secret, 'DJANGO_ALLOWED_HOSTS'),
       },
     });
 
@@ -85,33 +93,22 @@ export class CdkStack extends cdk.Stack {
       containerPort: 8000,
     });
 
-    // Create an ECS Fargate Service
-    const service = new ecs.FargateService(this, 'TestAppService', {
+    // Create an ECS Fargate Service with Load Balancer
+    const fargateService = new ecsPatterns.ApplicationLoadBalancedFargateService(this, 'DjangoService', {
       cluster,
       taskDefinition,
       desiredCount: 1,
+      publicLoadBalancer: true,
+      listenerPort: 80,
+      healthCheckGracePeriod: cdk.Duration.seconds(60),
     });
 
-    // Create an Application Load Balancer (ALB)
-    const lb = new elbv2.ApplicationLoadBalancer(this, 'TestAppLB', {
-      vpc,
-      internetFacing: true,
-    });
-
-    // Create a Listener and Target Group
-    const listener = lb.addListener('TestAppListener', { port: 80 });
-
-    listener.addTargets('TestAppTarget', {
-      port: 8000,
-      targets: [service],
-      healthCheck: {
-        path: '/health',
-        interval: cdk.Duration.seconds(30),
-      },
-    });
+    // Set Allowed Hosts to ALB
+    const albDnsName = fargateService.loadBalancer.loadBalancerDnsName;
+    container.addEnvironment('DJANGO_ALLOWED_HOSTS', albDnsName);
 
     // Enable Auto-Scaling for the ECS Service
-    const scaling = service.autoScaleTaskCount({ minCapacity: 1, maxCapacity: 5 });
+    const scaling = fargateService.service.autoScaleTaskCount({ minCapacity: 1, maxCapacity: 5 });
 
     scaling.scaleOnCpuUtilization('CpuScaling', {
       targetUtilizationPercent: 50,
@@ -125,9 +122,6 @@ export class CdkStack extends cdk.Stack {
       scaleOutCooldown: cdk.Duration.seconds(60),
     });
 
-    // Output the Load Balancer DNS Name
-    new cdk.CfnOutput(this, 'LoadBalancerDNS', {
-      value: lb.loadBalancerDnsName,
-    });
+    new cdk.CfnOutput(this, 'LoadBalancerDNS', { value: albDnsName });
   }
 }
