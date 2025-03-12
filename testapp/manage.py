@@ -8,9 +8,9 @@ import json
 from dotenv import load_dotenv
 
 def get_secret():
-    """Retrieve secrets from AWS Secrets Manager or return a mock secret locally."""
-
-    # If running in GitHub Actions and AWS credentials are missing, return mock secrets
+    """Retrieve secrets from AWS Secrets Manager or return mock secrets in CI/CD."""
+    
+    # ✅ If running in GitHub Actions, return mock secrets
     if os.getenv("GITHUB_ACTIONS") == "true":
         print("Running in GitHub Actions: Using mock secrets.")
         return {
@@ -18,28 +18,26 @@ def get_secret():
             "ALLOWED_HOSTS": "localhost,127.0.0.1"
         }
 
+    # ✅ Otherwise, fetch from AWS Secrets Manager
     secret_name = "TestAppSecrets"
     region_name = os.getenv("AWS_REGION", "sa-east-1")
 
-    # Create a Secrets Manager client
-    session = boto3.session.Session()
-    client = session.client(
-        service_name="secretsmanager",
-        region_name=region_name
-    )
-
     try:
-        get_secret_value_response = client.get_secret_value(
-            SecretId=secret_name
-        )
+        session = boto3.session.Session()
+        client = session.client(service_name="secretsmanager", region_name=region_name)
+        get_secret_value_response = client.get_secret_value(SecretId=secret_name)
+        secret = get_secret_value_response["SecretString"]
+        return json.loads(secret)
+    
     except NoCredentialsError:
-        print("AWS credentials not found, skipping Secrets Manager retrieval.")
+        print("⚠️ WARNING: AWS credentials not found. Using default environment values.")
         return {}
+
     except client.exceptions.ResourceNotFoundException:
         raise Exception(f"Secret {secret_name} not found in AWS Secrets Manager")
 
-    secret = get_secret_value_response["SecretString"]
-    return json.loads(secret)
+secrets = get_secret()
+SECRET_KEY = secrets.get("DJANGO_SECRET_KEY", os.getenv("DJANGO_SECRET_KEY", "fallback-secret-key"))
 
 
 def main():

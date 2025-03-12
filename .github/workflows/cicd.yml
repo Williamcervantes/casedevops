@@ -24,16 +24,14 @@ jobs:
         run: |
           pip install -r testapp/requirements.txt
 
-      - name: Set environment variables
-        run: echo "REQUIRED_SETTING=some_value" >> $GITHUB_ENV
+      - name: Set environment variables for Mock Secrets
+        run: |
+          echo "GITHUB_ACTIONS=true" >> $GITHUB_ENV
+          echo "DJANGO_SECRET_KEY=mock-secret-key" >> $GITHUB_ENV
 
       - name: Run Django tests
         run: |
           python testapp/manage.py test
-
-      - name: Check Docker build
-        run: |
-          docker build -t testapp .
 
   build:
     runs-on: ubuntu-latest
