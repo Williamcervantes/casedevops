@@ -1,0 +1,7 @@
+This is the entire project
+I have a few things to add, I was having a problem with the ECS service due to some problem with load balancer, I was not able to properly test it after correcting it because my aws free tier ended.
+There are things that I would have liked to add if this was a production application such as test coverage checks, linter, and if budget allowed sonarqube and fortify.
+Beyond that, I have done some structure changes to the project in order to organize it better and have more clear and separated responsibilities.
+Another thing that I would suggest, I believe two repos, one solely dedicated for the CDK and setting up of AWS services, another for the application, would probably be more secure and could avoid spending unnecessary cloud resources.
+I have created github secrets in order to store some information needed as environment variable but I chose to not store the django api key on github,
+I chose to store it in aws secret manager because it has a very robust encryption, it has seamless integration with ECS and a bunch of useful stuff for keeping this sorts of things!
