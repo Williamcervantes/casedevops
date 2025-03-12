@@ -8,13 +8,23 @@ import json
 from dotenv import load_dotenv
 
 def get_secret():
-    secret_name = "TestAppSecrets"  # Use the actual secret name from AWS Secrets Manager
-    region_name = "sa-east-1"  # Use your AWS region
+    """Retrieve secrets from AWS Secrets Manager or return a mock secret locally."""
+
+    # If running in GitHub Actions and AWS credentials are missing, return mock secrets
+    if os.getenv("GITHUB_ACTIONS") == "true":
+        print("Running in GitHub Actions: Using mock secrets.")
+        return {
+            "DJANGO_SECRET_KEY": "mock-secret-key",
+            "ALLOWED_HOSTS": "localhost,127.0.0.1"
+        }
+
+    secret_name = "TestAppSecrets"
+    region_name = os.getenv("AWS_REGION", "sa-east-1")
 
     # Create a Secrets Manager client
     session = boto3.session.Session()
     client = session.client(
-        service_name='secretsmanager',
+        service_name="secretsmanager",
         region_name=region_name
     )
 
@@ -22,14 +32,15 @@ def get_secret():
         get_secret_value_response = client.get_secret_value(
             SecretId=secret_name
         )
-    except (NoCredentialsError, PartialCredentialsError) as e:
-        raise Exception("AWS credentials not found") from e
+    except NoCredentialsError:
+        print("AWS credentials not found, skipping Secrets Manager retrieval.")
+        return {}
     except client.exceptions.ResourceNotFoundException:
         raise Exception(f"Secret {secret_name} not found in AWS Secrets Manager")
 
-    # Decrypts secret using the associated KMS key
-    secret = get_secret_value_response['SecretString']
+    secret = get_secret_value_response["SecretString"]
     return json.loads(secret)
+
 
 def main():
     """Run administrative tasks."""

@@ -110,4 +110,3 @@ jobs:
       - name: Update ECS Service with new image
         run: |
           aws ecs update-service --cluster testapp-cluster --service testapp-service --force-new-deployment
-
